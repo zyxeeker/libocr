@@ -150,7 +150,7 @@ float getContourArea(const std::vector<cv::Point2f>& box, float unClipRatio)
     return area * unClipRatio / dist;
 }
 
-#include "../../clipper.hpp"
+#include "clipper.hpp"
 cv::RotatedRect unClip(std::vector<cv::Point2f> box, float unClipRatio)
 {
     float distance = getContourArea(box, unClipRatio);

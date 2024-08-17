@@ -5,9 +5,7 @@
 #ifndef LIBOCR_OCR_MANAGER_H
 #define LIBOCR_OCR_MANAGER_H
 
-#include <onnxruntime_cxx_api.h>
-#include <opencv2/opencv.hpp>
-#include <windows.h>
+#include <memory>
 
 namespace libocr
 {
@@ -16,44 +14,38 @@ namespace libocr
         class text_detector;
         class text_recognizer;
     } // namespace onnx
+    using detector_ptr = std::shared_ptr<onnx::text_detector>;
+    using recognizer_ptr = std::shared_ptr<onnx::text_recognizer>;
 
     class ocr_manager
     {
-        onnx::text_detector* text_det;
-        onnx::text_recognizer* text_rec;
-        ocr_manager();
+    private:
+        detector_ptr detector;
+        recognizer_ptr recognizer;
+        bool initialized = false;
+
+        ocr_manager() = default;
+    public:
+        static ocr_manager& get_instance()
+        {
+            static ocr_manager instance;
+            return instance;
+        }
+        ~ocr_manager() = default;
 
     public:
-        static ocr_manager& get_instance();
-        ~ocr_manager();
-
-        std::string detect_and_recognize(const cv::Mat& image);
-        std::string recognize(const cv::Mat& image);
-
-        int recognize(int image_width, int image_height, const char* image_data, int image_data_size, char* result, int result_size);
-        int recognize(int image_width, int image_height, const char* image_data, unsigned int row_pitch, char* result, int result_size);
-        int recognize(const char* image_data, int image_data_size, char* result, int result_size);
-        int recognize(const char* image_file, char* result, int result_size);
-    };
-
-    inline int recognize_image_data(int image_width, int image_height, const char* image_data, int image_data_size, char* result, int result_size)
-    {
-        return libocr::ocr_manager::get_instance().recognize(image_width, image_height, image_data, image_data_size, result, result_size);
-    };
-
-    inline int recognize_image_data(int image_width, int image_height, const char* image_data, unsigned int row_pitch, char* result, int result_size)
-    {
-        return libocr::ocr_manager::get_instance().recognize(image_width, image_height, image_data, row_pitch, result, result_size);
-    };
-
-    inline int recognize_file_data(const char* image_data, int image_data_size, char* result, int result_size)
-    {
-        return libocr::ocr_manager::get_instance().recognize(image_data, image_data_size, result, result_size);
-    };
-
-    inline int recognize_file(const char* image_file, char* result, int result_size)
-    {
-        return libocr::ocr_manager::get_instance().recognize(image_file, result, result_size);
+        void init();
+    public:
+        detector_ptr get_detector() 
+        {
+            if (!initialized) init();
+            return detector;
+        }
+        recognizer_ptr get_recognizer() 
+        {
+            if (!initialized) init();
+            return recognizer;
+        }
     };
 } // namespace libocr
 

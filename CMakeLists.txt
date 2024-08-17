@@ -35,7 +35,7 @@ parse_version_file("resource/version.ver")
 get_commit_hash(PROJECT_VERSION_HASH)
 get_git_branch(PROJECT_VERSION_BRANCH)
 #=======================================================================================================================
-set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 #=======================================================================================================================
 set(BUILD_TARGET_NAME libocr CACHE STRING "Build target_name" FORCE)
