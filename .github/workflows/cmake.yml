@@ -2,7 +2,7 @@ name: CMake
 
 on:
   push:
-    branches: [ "master", "dev", "dev-*" ]
+    branches: [ "master", "dev", "dev-*", "refactor-*" ]
   pull_request:
     branches: [ "master", "dev" ]
 
@@ -22,14 +22,24 @@ jobs:
     steps:
     - name: Add MSBuild to PATH
       uses: microsoft/setup-msbuild@v1.0.2
+
+    - name: setup-vsdevenv
+      uses: seanmiddleditch/gha-setup-vsdevenv@master
       
     - uses: actions/checkout@v3
 
-    - name: Configure CMake
-      run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
+    - name: run-vcpkg
+      uses: lukka/run-vcpkg@v11
+      with:
+        runVcpkgInstall: true
+        
+    - name: run-cmake
+      uses: lukka/run-cmake@v10
+      with:
+        configurePreset: Release
 
-    - name: Build
-      run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}}
+    - name: build
+      run: cmake --build build --config ${{ env.BUILD_TYPE }}
         
     - name: Test
       working-directory: ${{github.workspace}}/build
