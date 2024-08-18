@@ -6,3 +6,4 @@
 /3rdparty/staticlib/*
 /resource/old/
 .vscode
+.vscode/settings.json

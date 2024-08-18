@@ -2,7 +2,7 @@ add_library(${BUILD_TARGET_NAME} SHARED)
 add_library(${BUILD_TARGET_NAME}::ocr ALIAS ${BUILD_TARGET_NAME})
 
 target_compile_options(${BUILD_TARGET_NAME} PRIVATE $<$<CXX_COMPILER_ID:MSVC>:/utf-8>)
-set_target_properties(${BUILD_TARGET_NAME} PROPERTIES MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>$<$<BOOL:${WITH_DYNAMIC_DEPS}>:DLL>")
+set_target_properties(${BUILD_TARGET_NAME} PROPERTIES MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
 target_compile_options(${BUILD_TARGET_NAME} PRIVATE $<$<CXX_COMPILER_ID:MSVC>:/MP>)
 
 # rc文件
@@ -26,8 +26,9 @@ target_compile_definitions(${BUILD_TARGET_NAME} PRIVATE LIBOCR_NAME="${BUILD_TAR
 
 target_sources(${BUILD_TARGET_NAME} PUBLIC ${include_dir}/libocr/libocr.h PRIVATE ${source_files})
 
-target_include_directories(${BUILD_TARGET_NAME} PRIVATE ${opencv_INCLUDE_DIR} ${onnxruntime_INCLUDE_DIR})
-target_link_libraries(${BUILD_TARGET_NAME} PRIVATE ${opencv_LIBRARYS} ${onnxruntime_LIBRARYS})
+target_link_libraries(${BUILD_TARGET_NAME} PRIVATE opencv_core opencv_imgcodecs opencv_imgproc)
+target_include_directories(${BUILD_TARGET_NAME} PRIVATE ${onnxruntime_INCLUDE_DIR})
+target_link_libraries(${BUILD_TARGET_NAME} PRIVATE ${onnxruntime_LIBRARYS})
 
 # 编译完成后，install到install目录
 install(TARGETS ${BUILD_TARGET_NAME})
